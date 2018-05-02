@@ -1,0 +1,60 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+
+<hibernate-mapping package="cjprofiles.db">
+   <class name = "ProfilesNorme" table = "TNORME">
+      <meta attribute = "class-description">
+         This class contains the employee detail. 
+      </meta>
+      
+      <id name = "id" type = "int" column = "id">
+         <generator class="identity"/>
+      </id>
+      
+      <property name = "normeName" column = "nname" type = "string"/>      
+      <property name = "code" column = "code" type = "string"/>
+   </class>
+   <class name = "ProfilesFamily" table = "TFAMILY">
+      <meta attribute = "class-description">
+         This class contains the employee detail. 
+      </meta>
+      
+      <id name = "id" type = "int" column = "id">
+         <generator class="identity"/>
+      </id>
+      
+      <property name = "profileName" column = "fname" type = "string"/>    
+      <property name = "profileNormeId" column = "normeid" type = "int"/> 
+      <property name = "profileImageId" column = "imageid" type = "int"/> 
+      <property name = "profileDrawerId" column = "drawerid" type = "int"/>   
+   </class>
+   
+   <class name = "ProfilesProperties"  table = "TPROFILES">
+      <meta attribute = "class-description">
+         This class contains the employee detail. 
+      </meta>
+      
+      <id name = "id" type = "int" column = "id">
+         <generator class="identity"/>
+      </id>
+      
+      <property name = "profileNormeId" column = "normeid" type = "int"/>      
+      <property name = "profileFamilyId" column = "familyid" type = "int"/>
+      <property name = "profileName" column = "profilename" type = "string"/>
+      <property name = "profileCharacteristic" column = "characteristic" type = "string"/>
+   </class>  
+    <class name = "ProfilesImage"  table = "TIMAGE">
+      <meta attribute = "class-description">
+         This class contains the employee detail. 
+      </meta>
+      
+      <id name = "id" type = "int" column = "id">
+         <generator class="identity"/>
+      </id>
+      
+      <property name = "profilesImage" column = "imagedata" type = "binary"/>      
+   </class>  
+
+</hibernate-mapping>
