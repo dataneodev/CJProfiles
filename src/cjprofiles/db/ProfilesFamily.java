@@ -1,15 +1,33 @@
 package cjprofiles.db;
 
- public class ProfilesFamily {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "TFAMILY")
+public class ProfilesFamily {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private int id;
+	
+	@Column(name = "fname")
 	private String profileName;
+	
+	@Column(name = "normeid")
 	private int profileNormeId;
+	
+	@Column(name = "imageid")
 	private int profileImageId;
+	
+	@Column(name = "drawerid")
 	private int profileDrawerId;
 	
-	public ProfilesFamily() {
-		
-	}
+	public ProfilesFamily() {}
 	
 	public ProfilesFamily(int id, String profileName, int profileNormeId, int profileImageId, int profileDrawerId) {
 		this.id = id;

@@ -3,8 +3,14 @@ package cjprofiles.db;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "TPROFILES")
 public class ProfilesProperties extends Profiles {
+	@Column(name = "characteristic")
 	private String profileCharacteristic;
 	
 	public String getProfileCharacteristic() {
@@ -21,6 +27,7 @@ public class ProfilesProperties extends Profiles {
 		 if(profileLine.length == 0) {
 			 return result;
 		 }
+		 
 		for(String line : profileLine) {
 			String[] para = line.split("=");
 			if(para.length != 3) { continue; }

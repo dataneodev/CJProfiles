@@ -1,6 +1,8 @@
 package cjprofiles.db;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.hibernate.Session;
@@ -10,6 +12,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 
 import cjprofiles.forms.MainApp;
 import javafx.collections.ObservableList;
@@ -135,23 +138,52 @@ public final class DBControl {
 	}
 }
 
-class HibernateUtil {	 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
- 
-    private static SessionFactory buildSessionFactory() {
-    	try {
-    		java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.WARNING);
-    		String hibernateCfgFile = MainApp.isProgramRunnedFromJar() ? "/src/hibernate.cfg.xml" : "hibernate.cfg.xml";
-    		StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder().configure(hibernateCfgFile).build();
-    	    Metadata metaData = new MetadataSources(standardRegistry).getMetadataBuilder().build();
-    	    return metaData.getSessionFactoryBuilder().build();
-    	} catch (Throwable th) {
-    		System.err.println("Enitial SessionFactory creation failed" + th);
-   	        throw new ExceptionInInitializerError(th);
-    	}
-    }
- 
-    public static SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
+
+class HibernateUtil{
+	private static StandardServiceRegistry registry;
+	private static SessionFactory sessionFactory;
+	
+	public static SessionFactory getSessionFactory() {
+		if (sessionFactory == null) {
+			try {
+				StandardServiceRegistryBuilder registryBuilder =  new StandardServiceRegistryBuilder();
+
+		        Map<String, String> settings = new HashMap<>();
+		        settings.put("hibernate.dialect", "org.hibernate.dialect.SQLiteDialect");
+		        settings.put("hibernate.connection.driver_class", "org.sqlite.JDBC");
+		        settings.put("hibernate.connection.url", "jdbc:sqlite:EC.pdb");
+		        settings.put("hibernate.connection.username", "");
+		        settings.put("hibernate.connection.password", "");
+		        settings.put("hibernate.format_sql", "true");
+		        settings.put("hibernate.show_sql", "false");
+		        settings.put("hibernate.hbm2ddl.auto", "validate");
+
+		        registryBuilder.applySettings(settings);
+
+		        registry = registryBuilder.build();
+
+		        MetadataSources sources = new MetadataSources(registry);
+		        sources.addAnnotatedClass(ProfilesNorme.class);
+		        sources.addAnnotatedClass(ProfilesFamily.class);
+		        sources.addAnnotatedClass(ProfilesImage.class);
+		        sources.addAnnotatedClass(ProfilesProperties.class);
+
+		        Metadata metadata = sources.getMetadataBuilder().build();
+
+		        sessionFactory = metadata.getSessionFactoryBuilder().build();
+		      } catch (Exception e) {
+		        System.out.println("SessionFactory creation failed");
+		        if (registry != null) {
+		          StandardServiceRegistryBuilder.destroy(registry);
+		        }
+		      }
+		    }
+		    return sessionFactory;
+	}
+	
+	public static void shutdown() {
+	    if (registry != null) {
+	      StandardServiceRegistryBuilder.destroy(registry);
+	    }
+	  }
 }

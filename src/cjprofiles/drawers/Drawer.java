@@ -32,7 +32,7 @@ public final class Drawer {
 			logger.warning("OpenDxf:!isFamilyHasDrawer(selectedFamily)");
 			return;
 		}	
-		
+	
 		String dxfBody = "";
 		try {
 			dxfBody = genDxf(profileProp, selFamily.getProfileDrawerId(), topView, frontView, sideView);	

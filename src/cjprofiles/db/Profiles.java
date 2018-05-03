@@ -1,14 +1,28 @@
 package cjprofiles.db;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
+@MappedSuperclass
 public class Profiles {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private int id;
+	
+	@Column(name = "normeid")
 	private int profileNormeId;
+	
+	@Column(name = "familyid")
 	private int profileFamilyId;
+	
+	@Column(name = "profilename")
 	private String profileName;
 		
-	public Profiles() {
-		
-	}
+	public Profiles() {}
 	
 	public Profiles(int id, int profileNormeId, int profileFamilyId, String profileName) {
 		this.id = id;

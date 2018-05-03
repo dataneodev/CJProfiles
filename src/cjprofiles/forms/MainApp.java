@@ -96,6 +96,7 @@ public final class MainApp extends Application {
 	public void changeFamily(ProfilesFamily selectedFamily) {
 		mFormController.setDxfOptionDisable(true);
 		if( selectedFamily == null) {return;}
+		
 		DBControl.loadProfiles(selectedFamily, profilesListOL); 
 		mFormController.setProfilesFirstIndex();
 		mFormController.setFamilyImage( DBControl.loadProfilesImage(selectedFamily));
