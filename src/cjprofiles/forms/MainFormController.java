@@ -6,6 +6,7 @@ import cjprofiles.db.Profiles;
 import cjprofiles.db.ProfilesFamily;
 import cjprofiles.db.ProfilesImage;
 import cjprofiles.db.ProfilesNorme;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +25,7 @@ public final class MainFormController{
 	private MainApp mainAppReference;
 	
 	// mainForm controls
+	
 	@FXML private TableView<ProfileItem> propTable;
 	@FXML private TableColumn<ProfileItem, String> propTableColKey;
 	@FXML private TableColumn<ProfileItem, String> propTableColValue;
@@ -38,7 +40,6 @@ public final class MainFormController{
 	@FXML private CheckBox topViewChB;
 	@FXML private CheckBox frontViewChB;
 	@FXML private CheckBox sideViewChB;
-
 	
 	@FXML
     private void initialize() {

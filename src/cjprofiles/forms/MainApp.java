@@ -12,6 +12,7 @@ import cjprofiles.db.ProfilesNorme;
 import cjprofiles.db.ProfilesProperties;
 import cjprofiles.drawers.Drawer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -53,6 +54,13 @@ public final class MainApp extends Application {
 		logger.fine("initMainForm");
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(MainApp.AppName + " " + AppVersion + " @" + AppAutor);
+        
+        Platform.setImplicitExit(true);
+        this.primaryStage.setOnCloseRequest((ae) -> {
+        	closeMainApp();
+            Platform.exit();
+            System.exit(0);
+        });
         	
         String sourceXMLFile = isProgramRunnedFromJar() ? "/src/cjprofiles/forms/MainForm.fxml" : "MainForm.fxml";
             
@@ -87,31 +95,40 @@ public final class MainApp extends Application {
 	}
 	
 	public void changeNorme(ProfilesNorme selectedNorme) {
-		if( selectedNorme == null) {return;}
-		DBControl.loadProfilesFamily(selectedNorme, profilesFamilyOL);
-		profilesListOL.clear();
-		mFormController.setProfilesFamilyCBFirstIndex(); 	
+		try {
+			DBControl.loadProfilesFamily(selectedNorme, profilesFamilyOL);
+		} catch(NullPointerException e) {
+			logger.warning("changeNorme: "+e.getMessage());
+			mFormController.setDxfOptionDisable(true);
+		} finally {
+			profilesListOL.clear();
+			mFormController.setProfilesFamilyCBFirstIndex(); 	
+		}
 	}
 	
 	public void changeFamily(ProfilesFamily selectedFamily) {
 		mFormController.setDxfOptionDisable(true);
-		if( selectedFamily == null) {return;}
-		
-		DBControl.loadProfiles(selectedFamily, profilesListOL); 
+		try {
+			DBControl.loadProfiles(selectedFamily, profilesListOL); 
+		} catch(NullPointerException e) {
+			logger.warning("changeFamily: "+e.getMessage());
+			return;
+		} 	
 		mFormController.setProfilesFirstIndex();
-		mFormController.setFamilyImage( DBControl.loadProfilesImage(selectedFamily));
+		mFormController.setFamilyImage( DBControl.loadProfilesImage(selectedFamily));	
 		if(Drawer.isFamilyHasDrawer(selectedFamily)) { mFormController.setDxfOptionDisable(false); }
 	}
 	
 	public void changeProfile(Profiles selectedProfile) {
 		profilePropertiesOL.clear();
-		if( selectedProfile == null) {return;}
-		
-		final ProfilesProperties ProfilesProperties = DBControl.loadProfilesProperties(selectedProfile);
-		if( ProfilesProperties == null) {return;}
-		List<ProfileItem> parametrs = ProfilesProperties.getProfileCharacteristicList();
-		if(parametrs.size() == 0) { return; }
-		for(ProfileItem item: parametrs) {
+		ProfilesProperties ProfilesProperties = null;
+		try {
+			ProfilesProperties = DBControl.loadProfilesProperties(selectedProfile);
+		} catch(NullPointerException e) {
+			logger.warning("changeProfile: "+e.getMessage());
+			return;
+		}
+		for(ProfileItem item: ProfilesProperties.getProfileCharacteristicList()) {
 			profilePropertiesOL.add(item);
 		}
 	}
@@ -135,6 +152,11 @@ public final class MainApp extends Application {
 			final ProfilesProperties ProfilesProp = DBControl.loadProfilesProperties(selectedProfile);
 			Drawer.dxfToFile(file.getAbsolutePath(), selectedFamily, ProfilesProp, topView, frontView, sideView); 
 		}
+	}
+	
+	public void closeMainApp() {
+		logger.fine("closeMainApp");
+		DBControl.shutdown();	
 	}
 	
 	public static boolean isProgramRunnedFromJar() {
